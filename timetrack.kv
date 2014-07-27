@@ -1,0 +1,177 @@
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
+#: import main main
+#: import datamanage datamanage
+
+TimeTrackRoot:
+	
+<TimeTrackRoot>:
+	carousel: carousel
+	time_record_screen: time_record_screen
+	task_manage_screen: task_manage_screen
+	BoxLayout:
+		Carousel:
+			id: carousel
+			TimeRecordScreen:
+				id: time_record_screen
+			TaskManageScreen:
+				id: task_manage_screen
+
+
+<TimeRecordScreen>:
+	orientation: 'vertical'
+	time_list: time_list
+	check_in: check_in
+	check_out: check_out
+	task_list: task_list
+	task_buttons: task_buttons
+	BoxLayout:
+		id: task_buttons
+		orientation: 'horizontal'
+		size_hint_y: None
+		height: '40dp'
+		StartButton:
+	BoxLayout:
+		orientation: 'horizontal'
+		id: time_list
+		ListView:
+			id: check_in
+			size_hint_x: 0.25
+			adapter:
+				ListAdapter(
+				data=[],
+				cls=main.CheckinButton,
+				args_converter=main.checkin_args_converter)
+		ListView:
+			id: check_out
+			size_hint_x: 0.25
+			adapter:
+				ListAdapter(
+				data=[],
+				cls=main.CheckoutButton,
+				args_converter=main.checkout_args_converter)
+		ListView:
+			id: task_list
+			size_hint_x: 0.5
+			adapter:
+				ListAdapter(
+				data=[],
+				cls=main.TaskNameButton,
+				args_converter=main.taskname_args_converter)
+
+<TaskListScreen>:
+	size_hint: 0.9, 0.9
+	switch: False
+	task_list: task_list
+	BoxLayout:
+		orientation: 'vertical'
+		Label: 
+			text: 'Tasks'
+			size_hint_y: None
+			height: '40dp'
+		ListView:
+			id: task_list
+			size_hint_x: None
+			width: root.width - 15
+			pos_hint: {'center_x':0.5}
+			adapter:
+				ListAdapter(
+				data=[],
+				cls=main.TaskListButton,
+				args_converter=main.tasks_args_converter)
+
+<TaskManageScreen>:
+	orientation: 'vertical'
+	task_list: task_list
+	add_to_cat_buttons: add_to_cat_buttons
+	delete_task_buttons: delete_task_buttons
+	BoxLayout:
+		orientation: 'horizontal'
+		size_hint_y: None
+		height: '40dp'
+		Button:
+			text: 'Add Task'
+			on_press: app.root.open_task_creator()
+		Button:
+			text: 'Add Category'
+	BoxLayout:
+		orientation: 'horizontal'
+		ListView:
+			id: task_list
+			size_hint_x: 0.5
+			adapter:
+				ListAdapter(
+				data=[],
+				cls=main.TaskManageButton,
+				args_converter=main.tasks_args_converter)
+		ListView:
+			id: add_to_cat_buttons
+			size_hint_x: 0.25
+			adapter:
+				ListAdapter(
+				data=[],
+				cls=main.AddToCatButton,
+				args_converter=main.add_cat_args_converter)
+		ListView:
+			id: delete_task_buttons
+			size_hint_x: 0.25
+			adapter:
+				ListAdapter(
+				data=[],
+				cls=main.DeleteTaskButton,
+				args_converter=main.delete_task_args_converter)
+
+
+<TaskCreatorScreen>:
+	BoxLayout:
+		orientation: 'vertical'
+		size_hint: 0.8, 0.8
+		TextInput:
+			size_hint_y: None
+			height: '40dp'
+			multiline: False
+			on_text_validate: app.root.create_new_task(self.text)
+		Button: 
+			text: 'Add'
+			size_hint_y: None
+			height: '40dp'
+
+<TaskListButton>:
+	size_hint_y: None
+	task_name: ''
+	height: '40dp'
+	on_press: app.root.add_check_in(self.task_id)
+
+<TaskManageButton>:
+	size_hint_y: None
+	task_id: 
+	task_name: ''
+	height: '40dp'
+
+<StartButton@Button>:
+	text: 'Start'
+	pos_hint: {'center_x':0.5}
+	on_press: app.root.add_task_list_screen()
+
+<TimeRecordButton>:
+	size_hint_y: None
+	height: '40dp'
+
+<SwitchButton@Button>:
+	text: 'Switch'
+	pos_hint: {'center_x':0.5}
+	on_press: app.root.add_task_list_screen(True)
+
+<DeleteTaskButton>:
+	size_hint_y: None
+	height: '40dp'
+	on_press: app.root.delete_task(self.task_id)
+
+<AddToCatButton>:
+	size_hint_y: None
+	height: '40dp'
+	on_press: app.root.add_to_cat(self.task_id)
+
+<EndButton@Button>:
+	text: 'End'
+	on_press: app.root.end_task()
