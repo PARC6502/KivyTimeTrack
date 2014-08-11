@@ -1,177 +1,260 @@
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 #: import main main
-#: import datamanage datamanage
 
 TimeTrackRoot:
-	
-<TimeTrackRoot>:
-	carousel: carousel
 	time_record_screen: time_record_screen
-	task_manage_screen: task_manage_screen
-	BoxLayout:
-		Carousel:
-			id: carousel
-			TimeRecordScreen:
-				id: time_record_screen
-			TaskManageScreen:
-				id: task_manage_screen
-
+	TimeRecordScreen:
+		id: time_record_screen
 
 <TimeRecordScreen>:
-	orientation: 'vertical'
-	time_list: time_list
-	check_in: check_in
-	check_out: check_out
-	task_list: task_list
 	task_buttons: task_buttons
+	entries: entries
+	orientation: 'vertical'
+	spacing: 20
 	BoxLayout:
 		id: task_buttons
 		orientation: 'horizontal'
 		size_hint_y: None
-		height: '40dp'
+		height: '40dp'		
 		StartButton:
-	BoxLayout:
-		orientation: 'horizontal'
-		id: time_list
-		ListView:
-			id: check_in
-			size_hint_x: 0.25
-			adapter:
-				ListAdapter(
-				data=[],
-				cls=main.CheckinButton,
-				args_converter=main.checkin_args_converter)
-		ListView:
-			id: check_out
-			size_hint_x: 0.25
-			adapter:
-				ListAdapter(
-				data=[],
-				cls=main.CheckoutButton,
-				args_converter=main.checkout_args_converter)
-		ListView:
-			id: task_list
-			size_hint_x: 0.5
-			adapter:
-				ListAdapter(
-				data=[],
-				cls=main.TaskNameButton,
-				args_converter=main.taskname_args_converter)
+	ScrollView:
+		GridLayout:
+			id: entries
+			cols: 1
+			size_hint_y: None
+			padding: "10dp"
+			height: self.minimum_height
+	Button:
+		text: "Manual Task Entry"
+		size_hint_y: None
+		height: "40dp"
+		on_press: app.root.open_manual_add()
 
-<TaskListScreen>:
-	size_hint: 0.9, 0.9
-	switch: False
+
+<DateList@GridLayout>:
+	date: ''
+	entries_list: entries_list
+	cols: 1
+	size_hint_y: None
+	height: self.minimum_height
+	Label:
+		text: root.date
+		size_hint_y: None
+		height: '30dp'
+		font_size: '20dp'
+	GridLayout:
+		id: entries_list
+		cols:3
+		size_hint_y: None
+		height: self.minimum_height
+
+<TaskSelector@Popup>:
+	title: "Select Task"
 	task_list: task_list
 	BoxLayout:
 		orientation: 'vertical'
-		Label: 
-			text: 'Tasks'
-			size_hint_y: None
-			height: '40dp'
 		ListView:
 			id: task_list
-			size_hint_x: None
-			width: root.width - 15
-			pos_hint: {'center_x':0.5}
 			adapter:
 				ListAdapter(
 				data=[],
 				cls=main.TaskListButton,
-				args_converter=main.tasks_args_converter)
+				args_converter=main.task_list_args)
+		BoxLayout:
+			orientation: 'horizontal'
+			size_hint_y: None
+			height: "40dp"
+			Button: 
+				text: 'New Task'
+				on_press: app.root.open_task_add_input()
+			Button:
+				text: 'Cancel'
+				on_press: root.dismiss()
 
-<TaskManageScreen>:
-	orientation: 'vertical'
-	task_list: task_list
-	add_to_cat_buttons: add_to_cat_buttons
-	delete_task_buttons: delete_task_buttons
-	BoxLayout:
-		orientation: 'horizontal'
-		size_hint_y: None
-		height: '40dp'
-		Button:
-			text: 'Add Task'
-			on_press: app.root.open_task_creator()
-		Button:
-			text: 'Add Category'
-	BoxLayout:
-		orientation: 'horizontal'
-		ListView:
-			id: task_list
-			size_hint_x: 0.5
-			adapter:
-				ListAdapter(
-				data=[],
-				cls=main.TaskManageButton,
-				args_converter=main.tasks_args_converter)
-		ListView:
-			id: add_to_cat_buttons
-			size_hint_x: 0.25
-			adapter:
-				ListAdapter(
-				data=[],
-				cls=main.AddToCatButton,
-				args_converter=main.add_cat_args_converter)
-		ListView:
-			id: delete_task_buttons
-			size_hint_x: 0.25
-			adapter:
-				ListAdapter(
-				data=[],
-				cls=main.DeleteTaskButton,
-				args_converter=main.delete_task_args_converter)
-
-
-<TaskCreatorScreen>:
+<ManualAdd>:
+	title: "Manual Task Entry"
+	task_name: ''
+	task_id: 
 	BoxLayout:
 		orientation: 'vertical'
-		size_hint: 0.8, 0.8
-		TextInput:
-			size_hint_y: None
-			height: '40dp'
-			multiline: False
-			on_text_validate: app.root.create_new_task(self.text)
-		Button: 
-			text: 'Add'
-			size_hint_y: None
-			height: '40dp'
+		BoxLayout:
+			orientation: 'horizontal'
+			Label:
+				size_hint_y: None
+				height: "100dp"
+				text: 'Task'
+				font_size: "40dp"
+			Button:
+				id: task_selector
+				size_hint_y: None
+				height: "100dp"
+				text: 'Select Task'
+				font_size: "40dp"
+				on_release: root.open_task_drop()
+		BoxLayout:
+			orientation: 'horizontal'
+			id: start_day
+			Label:
+				text: 'Start Day'
+				size_hint_y: None
+				height: "100dp"
+				font_size: "40dp"
+			DayInput:
+				id: day_input
+				size_hint: None, None
+				size: "100dp", "100dp"		
+				hint_text: 'Day'
+				focus: True
+			MonthInput:
+				id: month_input
+				size_hint: None, None
+				size: "100dp", "100dp"		
+				hint_text: 'Mon'
+			YearInput:
+				id: year_input
+				size_hint: None, None
+				size: "200dp", "100dp"		
+				hint_text: 'Year'
+		BoxLayout:
+			id: check_in
+			orientation: 'horizontal'
+			Label:
+				text: 'Check In'
+				size_hint_y: None
+				height: "100dp"
+				font_size: "40dp"
+			HourInput:
+				id: check_in_hour
+				size_hint: None, None
+				size: "100dp", "100dp"
+				hint_text: 'hh'
+			Label:
+				text: ':'
+				size_hint: None, None
+				size: "10dp", "100dp"
+				font_size: "40dp"
+			MinuteInput:
+				id: check_in_minute
+				size_hint: None, None
+				size: "100dp", "100dp"			
+				hint_text: 'mm'
+		BoxLayout:
+			id: check_out
+			orientation: 'horizontal'
+			Label:
+				text: 'Check Out'
+				size_hint_y: None
+				height: "100dp"
+				font_size: "40dp"
+			HourInput:
+				id: check_out_hour
+				size_hint: None, None
+				size: "100dp", "100dp"		
+				hint_text: 'hh'
+			Label:
+				text: ':'
+				size_hint: None, None
+				size: "10dp", "100dp"
+				font_size: "40dp"
+			MinuteInput:
+				id: check_out_minute
+				size_hint: None, None
+				size: "100dp", "100dp"
+				hint_text: 'mm'
+				focus_next: StopIteration
+		BoxLayout:
+			orientation: 'horizontal'
+			Button:
+				text: 'Submit'
+				size_hint_y: None
+				height: "50dp"
+				on_press: root.process_manual_entry()
+			Button:
+				text: 'Cancel'
+				size_hint_y: None
+				height: "50dp"
+				on_press: root.dismiss()
 
-<TaskListButton>:
-	size_hint_y: None
-	task_name: ''
-	height: '40dp'
-	on_press: app.root.add_check_in(self.task_id)
+<TaskDrop>:
+	TextInput:
+		id: text_input
+		size_hint_y: None
+		height: '40dp'
+		multiline: False
+		hint_text: "Enter new task."
+		on_text_validate: root.add_task(self.text)
 
-<TaskManageButton>:
+<TaskAddInput@BoxLayout>:
+	id: task_add_input
+	text_input: text_input
 	size_hint_y: None
-	task_id: 
-	task_name: ''
-	height: '40dp'
+	height: "40dp"
+	TextInput:
+		id: text_input
+		multiline: False
+		on_text_validate: app.root.add_task(self.text)
+	Button:
+		text: 'Add Task'
+		on_press: app.root.add_task(root.text_input.text)
+
+
+<ErrorMessage@Popup>:
+	title: "Error"
+	message: ''
+	size_hint: 0.8, 0.5
+	Label:
+		text: root.message
+
 
 <StartButton@Button>:
 	text: 'Start'
-	pos_hint: {'center_x':0.5}
-	on_press: app.root.add_task_list_screen()
+	on_press: app.root.open_task_selector()
 
-<TimeRecordButton>:
+<TaskListButton>:
 	size_hint_y: None
-	height: '40dp'
-
-<SwitchButton@Button>:
-	text: 'Switch'
-	pos_hint: {'center_x':0.5}
-	on_press: app.root.add_task_list_screen(True)
-
-<DeleteTaskButton>:
-	size_hint_y: None
-	height: '40dp'
-	on_press: app.root.delete_task(self.task_id)
-
-<AddToCatButton>:
-	size_hint_y: None
-	height: '40dp'
-	on_press: app.root.add_to_cat(self.task_id)
+	height: "40dp"
+	on_press: app.root.start_timer(self.task_id, self.text)
 
 <EndButton@Button>:
 	text: 'End'
-	on_press: app.root.end_task()
+	pos_hint: {'top': 1}
+	size_hint_y: None
+	height: "40dp"
+	on_press: app.root.end_timer()
+
+<SwitchButton@Button>:
+	text: 'Switch'
+	pos_hint: {'top': 1}
+	size_hint_y: None
+	height: "40dp"
+	on_press: app.root.switch_timer()
+
+<TaskTimer>:
+	pos_hint: {'top': 1}
+	size_hint_y: None
+	height: "40dp"
+
+<EntryNameButton@Button>:
+	size_hint: 0.5, None
+	height: "40dp"
+	entry_id: -1
+	text: ''
+
+<EntryDurationButton@Button>:
+	size_hint: 0.25, None
+	height: "40dp"
+	entry_id: -1
+	text: ''
+
+<EntryStartStopButton@Button>:
+	size_hint: 0.25, None
+	height: "40dp"
+	entry_id: -1
+	text: ''
+
+<ManualTaskButton@Button>:
+	size_hint_y: None
+	height: "40dp"
+	task_id:
+	on_release: app.root.manual_add.task_drop.select((self.text, self.task_id))

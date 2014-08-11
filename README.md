@@ -1,6 +1,6 @@
 KivyTimeTrack
 ===================
 
-This is a WIP app for timetracking written in python/kivy. 
+This is a WIP app for time-recording written in python/kivy. 
 
-It's not even close to ready, and is very ugly at the moment, but as I said, WIP.
+11/08/2014: Switched to [Matham's focus-text fork](https://github.com/matham/kivy/tree/focus-text) until it is merged with master 
